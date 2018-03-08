@@ -74,7 +74,7 @@ public class DemoApplication {
 	private static final String TEST_FIXTURES_PATH = "src/test/fixture";
 
 	private static final String FOO_CHANNEL_NAME = "foo";
-	private static final String BAR_CHANNEL_NAME = "bar";
+	//private static final String BAR_CHANNEL_NAME = "bar";
 
 	private static final byte[] EXPECTED_EVENT_DATA = "!".getBytes(UTF_8);
 	private static final String EXPECTED_EVENT_NAME = "event";
@@ -109,8 +109,14 @@ public class DemoApplication {
 		SpringApplication.run(DemoApplication.class, args);
 		DemoApplication dm = new DemoApplication();
 		dm.runCustomFabric();
+		System.out.print("End2End finished /n/nEnd2End back start/n/n");
 
-		System.out.print("running");
+		End2endAndBackAgainIT end2endAndBackAgainIT = new End2endAndBackAgainIT();
+		end2endAndBackAgainIT.setup();
+
+
+
+		//end2endAndBackAgainIT.setup();
 	}
 
 	public void runCustomFabric() throws Exception {
@@ -202,8 +208,21 @@ public class DemoApplication {
 		////////////////////////////
 		//Construct and run the channels
 		SampleOrg sampleOrg = testConfig.getIntegrationTestsSampleOrg("peerOrg1");
-		Channel fooChannel = constructChannel(FOO_CHANNEL_NAME, client, sampleOrg);
-		sampleStore.saveChannel(fooChannel);
+
+		Channel fooChannel = null;
+
+
+			fooChannel = sampleStore.getChannel(client, FOO_CHANNEL_NAME);
+		if(fooChannel==null) {
+			fooChannel = constructChannel(FOO_CHANNEL_NAME, client, sampleOrg);
+			sampleStore.saveChannel(fooChannel);
+		} else {
+			client.setUserContext(sampleOrg.getUser(TESTUSER_1_NAME));
+			fooChannel.initialize();
+		}
+
+
+
 		runChannel(client, fooChannel, true, sampleOrg, 0);
 
 		////assertFalse(fooChannel.isShutdown());
@@ -213,12 +232,12 @@ public class DemoApplication {
 		////assertNull(client.getChannel(FOO_CHANNEL_NAME));
 		out("\n");
 
-		sampleOrg = testConfig.getIntegrationTestsSampleOrg("peerOrg2");
+	/*	sampleOrg = testConfig.getIntegrationTestsSampleOrg("peerOrg2");
 		Channel barChannel = constructChannel(BAR_CHANNEL_NAME, client, sampleOrg);
 		////assertTrue(barChannel.isInitialized());
-		/**
+		*//**
 		 * sampleStore.saveChannel uses {@link Channel#serializeChannel()}
-		 */
+		 *//*
 		sampleStore.saveChannel(barChannel);
 	//	//assertFalse(barChannel.isShutdown());
 		runChannel(client, barChannel, true, sampleOrg, 100); //run a newly constructed bar channel with different b value!
@@ -227,7 +246,7 @@ public class DemoApplication {
 		out("\nTraverse the blocks for chain %s ", barChannel.getName());
 
 		blockWalker(client, barChannel);
-
+*/
 		////assertFalse(barChannel.isShutdown());
 	//	//assertTrue(barChannel.isInitialized());
 		out("That's all folks!");
@@ -255,7 +274,7 @@ public class DemoApplication {
 				//This shows how to get a client TLS certificate from Fabric CA
 				// we will use one client TLS certificate for orderer peers etc.
 				final EnrollmentRequest enrollmentRequestTLS = new EnrollmentRequest();
-				enrollmentRequestTLS.addHost("192.168.99.1");
+				enrollmentRequestTLS.addHost("localhost");
 				enrollmentRequestTLS.setProfile("tls");
 				final Enrollment enroll = ca.enroll("admin", "adminpw", enrollmentRequestTLS);
 				final String tlsCertPEM = enroll.getCert();
@@ -761,8 +780,8 @@ public class DemoApplication {
 		out("Constructing channel %s", name);
 
 		//boolean doPeerEventing = false;
-		boolean doPeerEventing = !testConfig.isRunningAgainstFabric10() && BAR_CHANNEL_NAME.equals(name);
-//        boolean doPeerEventing = !testConfig.isRunningAgainstFabric10() && FOO_CHANNEL_NAME.equals(name);
+//		boolean doPeerEventing = !testConfig.isRunningAgainstFabric10() && BAR_CHANNEL_NAME.equals(name);
+        boolean doPeerEventing = !testConfig.isRunningAgainstFabric10() && FOO_CHANNEL_NAME.equals(name);
 		//Only peer Admin org
 		client.setUserContext(sampleOrg.getPeerAdmin());
 

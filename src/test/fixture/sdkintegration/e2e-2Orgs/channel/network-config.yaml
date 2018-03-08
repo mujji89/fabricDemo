@@ -166,10 +166,10 @@ organizations:
   # peers with a public URL to send transaction proposals. The file will not contain private
   # information reserved for members of the organization, such as admin key and certificate,
   # fabric-ca registrar enroll ID and secret, etc.
-  Org2:
-    mspid: Org2MSP
-    peers:
-      - peer0.org2.example.com
+#  Org2:
+#    mspid: Org2MSP
+#    peers:
+#      - peer0.org2.example.com
 
 #
 # List of orderers to send transaction and channel create/update requests to. For the time
@@ -264,18 +264,18 @@ peers:
 
 
 
-  peer0.org2.example.com:
-    url: grpc://localhost:8051
-    eventUrl: grpc://localhost:8053
-    grpcOptions:
-#      ssl-target-name-override: peer0.org2.example.com
-#      negotiationType: TLS
-#      grpc.NettyChannelBuilderOption.maxInboundMessageSize: 9000000
-      sslProvider: openSSL
-      hostnameOverride: peer0.org2.example.com
-
-    tlsCACerts:
-      path: src/test/fixture/sdkintegration/e2e-2Orgs/channel/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/server.crt
+#  peer0.org2.example.com:
+#    url: grpc://localhost:8051
+#    eventUrl: grpc://localhost:8053
+#    grpcOptions:
+##      ssl-target-name-override: peer0.org2.example.com
+##      negotiationType: TLS
+##      grpc.NettyChannelBuilderOption.maxInboundMessageSize: 9000000
+#      sslProvider: openSSL
+#      hostnameOverride: peer0.org2.example.com
+#
+#    tlsCACerts:
+#      path: src/test/fixture/sdkintegration/e2e-2Orgs/channel/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/server.crt
 
 #
 # Fabric-CA is a special kind of Certificate Authority provided by Hyperledger Fabric which allows
