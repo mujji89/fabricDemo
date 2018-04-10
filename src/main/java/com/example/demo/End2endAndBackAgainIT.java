@@ -68,10 +68,10 @@ public class End2endAndBackAgainIT {
     String testName = "End2endAndBackAgainIT";
 
     String CHAIN_CODE_FILEPATH = "sdkintegration/gocc/sample_11";
-    String CHAIN_CODE_NAME = "example_cc_go";
-    String CHAIN_CODE_PATH = "github.com/example_cc";
-    String CHAIN_CODE_VERSION_11 = "11";
-    String CHAIN_CODE_VERSION = "1";
+    String CHAIN_CODE_NAME = "file_cc_go";
+    String CHAIN_CODE_PATH = "github.com/file_cc";
+    String CHAIN_CODE_VERSION_11 = "13";
+    String CHAIN_CODE_VERSION = "3";
     TransactionRequest.Type CHAIN_CODE_LANG = TransactionRequest.Type.GO_LANG;
 
     ChaincodeID chaincodeID = ChaincodeID.newBuilder().setName(CHAIN_CODE_NAME)
@@ -515,13 +515,18 @@ public class End2endAndBackAgainIT {
             Collection<ProposalResponse> successful = new LinkedList<>();
             Collection<ProposalResponse> failed = new LinkedList<>();
 
+
+            String contractName2 = "contract1";
+            String fileHash2 = "file1Hash";
+            String ownner2 = "John";
+            String accessList2 = "Mujtaba";
             ///////////////
             /// Send transaction proposal to all peers
             TransactionProposalRequest transactionProposalRequest = client.newTransactionProposalRequest();
             transactionProposalRequest.setChaincodeID(chaincodeID);
-            transactionProposalRequest.setFcn("move");
+            transactionProposalRequest.setFcn("add");
             transactionProposalRequest.setArgs(new byte[][] {//test using bytes .. end2end uses Strings.
-                    "a".getBytes(UTF_8), "b".getBytes(UTF_8), moveAmount.getBytes(UTF_8)});
+                    fileHash2.getBytes(UTF_8), contractName2.getBytes(UTF_8), ownner2.getBytes(UTF_8), accessList2.getBytes(UTF_8)});
             transactionProposalRequest.setProposalWaitTime(testConfig.getProposalWaitTime());
             if (user != null) { // specific user use that
                 transactionProposalRequest.setUserContext(user);
@@ -923,7 +928,7 @@ public class End2endAndBackAgainIT {
 
         out("Now query chaincode %s on channel %s for the value of b expecting to see: %s", chaincodeID, channel.getName(), expect);
         QueryByChaincodeRequest queryByChaincodeRequest = client.newQueryProposalRequest();
-        queryByChaincodeRequest.setArgs("b".getBytes(UTF_8)); // test using bytes as args. End2end uses Strings.
+        queryByChaincodeRequest.setArgs("contract1".getBytes(UTF_8)); // test using bytes as args. End2end uses Strings.
         queryByChaincodeRequest.setFcn("query");
         queryByChaincodeRequest.setChaincodeID(chaincodeID);
 

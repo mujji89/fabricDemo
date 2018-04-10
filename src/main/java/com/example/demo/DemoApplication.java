@@ -95,9 +95,9 @@ public class DemoApplication {
 	String testName = "End2endIT";
 
 	String CHAIN_CODE_FILEPATH = "sdkintegration/gocc/sample1";
-	String CHAIN_CODE_NAME = "example_cc_go";
-	String CHAIN_CODE_PATH = "github.com/example_cc";
-	String CHAIN_CODE_VERSION = "1";
+	String CHAIN_CODE_NAME = "file_cc_go";
+	String CHAIN_CODE_PATH = "github.com/file_cc";
+	String CHAIN_CODE_VERSION = "3";
 	Type CHAIN_CODE_LANG = Type.GO_LANG;
 
 	Map<String, Properties> clientTLSProperties = new HashMap<>();
@@ -114,9 +114,6 @@ public class DemoApplication {
 		End2endAndBackAgainIT end2endAndBackAgainIT = new End2endAndBackAgainIT();
 		end2endAndBackAgainIT.setup();
 
-
-
-		//end2endAndBackAgainIT.setup();
 	}
 
 	public void runCustomFabric() throws Exception {
@@ -473,7 +470,10 @@ public class DemoApplication {
 			//  final ChaincodeID chaincodeID = firstInstallProposalResponse.getChaincodeID();
 			// Note installing chaincode does not require transaction no need to
 			// send to Orderers
-
+			String contractName = "contract0";
+			String fileHash = "file0Hash";
+			String ownner = "root";
+			String accessList = "Alice";
 			///////////////
 			//// Instantiate chaincode.
 			InstantiateProposalRequest instantiateProposalRequest = client.newInstantiationProposalRequest();
@@ -481,7 +481,7 @@ public class DemoApplication {
 			instantiateProposalRequest.setChaincodeID(chaincodeID);
 			instantiateProposalRequest.setChaincodeLanguage(CHAIN_CODE_LANG);
 			instantiateProposalRequest.setFcn("init");
-			instantiateProposalRequest.setArgs(new String[] {"a", "500", "b", "" + (200 + delta)});
+			instantiateProposalRequest.setArgs(new String[] {fileHash, contractName, ownner, accessList});
 			Map<String, byte[]> tm = new HashMap<>();
 			tm.put("HyperLedgerFabric", "InstantiateProposalRequest:JavaSDK".getBytes(UTF_8));
 			tm.put("method", "InstantiateProposalRequest".getBytes(UTF_8));
@@ -538,16 +538,19 @@ public class DemoApplication {
 					failed.clear();
 
 					client.setUserContext(sampleOrg.getUser(TESTUSER_1_NAME));
-
+					String contract1Name = "contract1";
+					String fileHash1 = "file1Hash";
+					String ownner1 = "Mujtaba";
+					String accessList1 = "Bob";
 					///////////////
 					/// Send transaction proposal to all peers
 					TransactionProposalRequest transactionProposalRequest = client.newTransactionProposalRequest();
 					transactionProposalRequest.setChaincodeID(chaincodeID);
 					transactionProposalRequest.setChaincodeLanguage(CHAIN_CODE_LANG);
 					//transactionProposalRequest.setFcn("invoke");
-					transactionProposalRequest.setFcn("move");
+					transactionProposalRequest.setFcn("add");
 					transactionProposalRequest.setProposalWaitTime(testConfig.getProposalWaitTime());
-					transactionProposalRequest.setArgs("a", "b", "100");
+					transactionProposalRequest.setArgs(fileHash1, contract1Name, ownner1, accessList1);
 
 					Map<String, byte[]> tm2 = new HashMap<>();
 					tm2.put("HyperLedgerFabric", "TransactionProposalRequest:JavaSDK".getBytes(UTF_8)); //Just some extra junk in transient map
@@ -620,7 +623,7 @@ public class DemoApplication {
 
 					////////////////////////////
 					// Send Transaction Transaction to orderer
-					out("Sending chaincode transaction(move a,b,100) to orderer.");
+					out("Sending chaincode transaction(add contract) to orderer.");
 					return channel.sendTransaction(successful).get(testConfig.getTransactionWaitTime(), TimeUnit.SECONDS);
 
 				} catch (Exception e) {
@@ -643,10 +646,14 @@ public class DemoApplication {
 					////////////////////////////
 					// Send Query Proposal to all peers
 					//
+					String contractName1 = "contract1";
+					String fileHash1 = "file1Hash";
+					String ownser1 = "Mujtaba";
+					String accessList1 = "Bob";
 					String expect = "" + (300 + delta);
 					out("Now query chaincode for the value of b.");
 					QueryByChaincodeRequest queryByChaincodeRequest = client.newQueryProposalRequest();
-					queryByChaincodeRequest.setArgs(new String[] {"b"});
+					queryByChaincodeRequest.setArgs(new String[] {contractName1});
 					queryByChaincodeRequest.setFcn("query");
 					queryByChaincodeRequest.setChaincodeID(chaincodeID);
 
